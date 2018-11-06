@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Three.js homework</title>
+        <style>
+            body{ margin: 0;}
+            canvas {width: 100%; height: 100% }
+        </style>
+    </head>
+    <body>
+        <script src="js/three.js"></script>
+        <script src="js/OrbitControls.js"></script>
+         <script id="vertexShader" type="x-shader/x-vertex">
+                uniform mat4 viewMatrix;
+                uniform mat4 projectionMatrix;
+                uniform mat4 modelMatrix;
+                uniform mat4 modelViewMatrix;
+
+                attribute vec3 position;
+                attribute vec3 normal;
+
+                varying vec3 worldPosition;
+                varying vec3 worldNormal;
+
+                void main(){
+                    worldPosition = mat3(modelMatrix) * position;
+                    worldNormal = normalize(mat3(modelMatrix) * normal);
+                    vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                    gl_Position = projectionMatrix * mvPosition;
+                }
+        </script>
+        <script id="fragmentShader" type="x-shader/x-fragment">
+                precision mediump float;
+                
+                uniform vec3 lightPosition;
+                uniform vec3 cameraPosition;
+                uniform sampler2D irradiance;
+                uniform float PI = 3.1415926535897932384626433832795;
+
+                varying vec3 worldPosition;
+                varying vec3 worldNormal;
+
+
+                void main(){
+                    vec3 N = normalize(worldNormal);
+                    float theta = acos(N.z)/PI;
+                    float phi = (atan(normal.y, normal.x) + PI)/(2*PI);
+                    vec4 texture = texture2D(irradiance, vec2(theta, phi));
+                    gl_FragColor = texture;
+                }
+        </script>
+        <script src="js/homework5.js"></script>
+    </body>
+</html>
