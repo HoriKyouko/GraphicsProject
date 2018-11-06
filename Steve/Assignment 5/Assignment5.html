@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<!--Created By: Steven Michael Zielinski-->
+<!--For: CAP5725 Assignment 3 -->
+<!--When running the project the first model shown is with the correct 
+    material. Clicking the threejs checkbox will show the 
+    MeshPhongMaterial model and deselecting it will show my fragment
+    and vertex shaders with the same settings.-->
+
+<html>
+    <head>
+        <title>--Assignment 3--</title>
+        <script src="https://threejs.org/build/three.js"></script>
+        <script 
+            src=
+            "https://threejs.org/examples/js/controls/OrbitControls.js">
+        </script>
+        <script 
+            src="https://threejs.org/examples/js/libs/dat.gui.min.js">
+        </script>
+        <script
+            src="https://threejs.org/examples/js/loaders/OBJLoader.js">
+        </script>
+        <script
+            src="https://threejs.org/examples/js/loaders/MTLLoader.js">
+        </script>
+
+        <script>
+            "use strict";
+            // This file was copied directly from addObjToScene which 
+            // was given by the professor. I have only added in spacing to 
+            // make it easier to read.
+            // The method loads an OBJ file whose detail is specified in 
+            // objectInfo
+            // File is loaded asynchronously
+            // After loading the model is normalized (scaled to make maximum 
+            // base width to 1
+            // Adds it into "scene"
+            // Applies scaling and translation
+            // Invokes the "render" function at the end.
+
+            // Parameters:
+            // objectInfo: an object with the following properties:
+            //          mtlPathName : path to the directory for obj file. 
+            //              default: "./"
+            //          objPathName : path to the directory for obj file. 
+            //              default: "./"
+            //          texturePathName :  path to the directory for texture. 
+            //              default: "./"
+            //          mtlFileName : material file name. default: "null"
+            //          objFileName : "suzanne.obj",
+            //          scale: scalefactor to uniformly scale the object. 
+            //              detault=1
+            //          y_rotate: rotation angle in radian. Default = 0
+            //          translateVector: a translation vector: default = new 
+            //              THREE.Vector3(0,0,0),
+            //          obj: undefined
+            //
+            // "scene": The scene object to which the loaded object mesh is 
+            //      added.
+            // "render": the render function to render the scene.
+            // example use:
+            /*
+                let suzanne = {
+                    mtlPathName : "./objModels/suzanne/",
+                    objPathName : "./objModels/suzanne/",
+                    texturePathName : "./objModels/suzanne/",
+                    mtlFileName : "suzanne.mtl",
+                    objFileName : "suzanne.obj",
+                    scale: 10,
+                    y_rotate: 0,
+                    translateVector: new THREE.Vector3(0,0,0),
+                    obj: undefined
+                };
+                addObjToSceneAndRender(suzanne, scene, render)
+            */
+            function addObjToSceneAndRender(objectInfo, scene, render) 
+            {
+
+                if (objectInfo.objFileName) 
+                {
+                    console.log(objectInfo)
+                    console.log("Missing Object file");
+                }
+                
+                let objLoader = new THREE.OBJLoader();
+                
+                if (objectInfo.objPathName) 
+                {
+                    objLoader.setPath(objectInfo.objPathName);
+                }
+                
+                if (objectInfo.mtlPathName) 
+                {
+                    let mtlLoader = new THREE.MTLLoader();
+                    mtlLoader.setPath(objectInfo.mtlPathName);
+                    
+                    if (objectInfo.texturePathName)
+                    {
+                        mtlLoader.setTexturePath(objectInfo.texturePathName);
+                    }
+                    
+                    mtlLoader.load(objectInfo.mtlFileName, onMtlLoad);
+                }
+                else 
+                {
+                    objLoader.load(objectInfo.objFileName, onObjLoad);
+                }
+                    
+                function onMtlLoad(mtl) 
+                {
+                    mtl.preload();
+                    objLoader.setMaterials(mtl);
+                    objLoader.load(objectInfo.objFileName, onObjLoad);
+                }
+
+                // called when resource is loaded
+                function onObjLoad(object) 
+                {
+                    //object.children.forEach(function(e){e.material = normalMaterial;});
+                    let bBox = new THREE.Box3().setFromObject(object);
+                    let size = new THREE.Vector3();
+                    bBox.getSize(size);
+                    let maxBaseSize = Math.max(size.x, size.z);
+                    let scaleFactor = 
+                        ((objectInfo.scale)?objectInfo.scale:1)/ maxBaseSize;
+                    object.scale.multiplyScalar(scaleFactor);
+                    
+                    if (objectInfo.y_rotate) 
+                    {
+                        object.rotateY(objectInfo.y_rotate);
+                    }
+                    
+                    if (objectInfo.translateVector) 
+                    {
+                        object.position.copy(objectInfo.translateVector);
+                    }
+
+                    objectInfo.obj = object;
+                    scene.add(object);
+                    render();
+                }
+            }
+
+            // This file was copied directly from addObjToScene which 
+            // was given by the professor. I have only added in spacing to 
+            // make it easier to read.
+            function updateObjectMaterial(object, material)
+            {
+                if (object.material) 
+                {
+                    object.material = material;
+                }
+	            else if (object.children)
+		        {
+                    object.children.forEach(
+                        function(e){e.material = material;});
+                }
+                else 
+                {
+                    alert("Error: Object does not have material property.");
+                }
+            }
+
+            // I tried to get this function to work based on the sample, 
+            // but couldn't get the code to read the file correctly. So I moved
+            // the shaders into the html.
+            function readFromFile(filename)
+            {
+                // Create a http request
+                var	xmlhttp = new XMLHttpRequest();
+                
+                // Open the file
+                xmlhttp.open("GET", filename, false);
+
+                // 
+                xmlhttp.overrideMimeType("application/document");
+
+                // 
+                xmlhttp.send(null);
+
+                // Return the text
+                return xmlhttp.responseText;
+            }
+
+            function mainFunction()
+            {
+                // Setup the renderer
+                let renderer = new THREE.WebGLRenderer();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                document.body.appendChild(renderer.domElement);
+
+                // Create the scene
+                let scene = new THREE.Scene();
+
+                // Find the aspect ratio of the window
+                let aspect = window.innerWidth / window.innerHeight;
+                // Setup the camera for perspective viewing
+                let camera = new THREE.PerspectiveCamera(75, aspect, 0.1, 100);
+                camera.position.z = 20;
+                scene.add(camera);
+
+                console.log(readFromFile("Assignment3.vs"));
+                console.log(readFromFile("Assignment3-20.fs"));
+
+                document.body.appendChild( renderer.domElement );
+
+                // Render function to draw the scene
+                let render = function()
+                {
+                    renderer.render(scene, camera);
+                };
+
+                // Add the object to the scene
+                let bunny = {
+                    objPathName : "./",
+                    objFileName : "f16.obj",
+                    mtlFileName : "f16.mtl",
+                    scale: 10,
+                    y_rotate: 0,
+                    translateVector: new THREE.Vector3(0,0,0),
+                    obj: undefined
+                };
+                addObjToSceneAndRender(bunny, scene, render);
+
+                // Setup for the camera controls that allow the user
+                // to move the camera
+                let cameraControl = new THREE.OrbitControls(camera);
+                cameraControl.addEventListener("change", render);
+
+                var light = new THREE.PointLight( 0xffffff, 1.0);
+                light.position.set( 0, 50, 0 );
+                scene.add( light );
+
+                window.addEventListener( 'resize', onWindowResize, false );
+
+                function onWindowResize()
+                {
+                    camera.aspect = window.innerWidth / window.innerHeight;
+                    camera.updateProjectionMatrix();
+
+                    renderer.setSize(window.innerWidth, window.innerHeight);
+
+                    render();
+                }
+
+                let menu = {
+                    threejs: false
+                }
+
+                let gui = new dat.GUI();
+                let model = gui.add(menu, 'threejs');
+
+                let objMaterial = {
+                    color: 0xffffff,
+                    shininess: 0.5,
+                    specular: 0x111111
+                }
+
+                let threejsMaterial = new THREE.MeshPhongMaterial(objMaterial);
+                let myMaterial = new THREE.RawShaderMaterial({
+                    side: THREE.DoubleSide,
+                    uniforms:{
+                        lightPosition: { value: new THREE.Vector3(0, 50, 0) },
+                        lightColor: { value: new THREE.Color(0xffffff) },
+		                lightIntensity: { value: 1.0 },
+                        diffuseColor: { value: new THREE.Color(0xffffff) },
+                        shininess: { value: 0.5 },
+                        specularColor: { value: new THREE.Color(0x111111) }
+                    }, 
+                    fragmentShader:
+                        readFromFile('Assignment3-20.fs'),
+                    vertexShader:
+                        readFromFile('Assignment3.vs')
+                })
+
+                model.onFinishChange(function(value)
+                {
+                    if (value)
+                    {
+                        console.log('threejs is selected');
+                        updateObjectMaterial(bunny.obj, threejsMaterial);
+                    }
+                    else
+                    {
+                        
+                        console.log('mine is selected');
+                        updateObjectMaterial(bunny.obj, myMaterial);
+                    }
+
+                    render();
+                });
+
+
+                // Render the scene
+                render();
+            }
+
+        </script>
+    </head>
+    <body onload=mainFunction();></body>
+</html>
