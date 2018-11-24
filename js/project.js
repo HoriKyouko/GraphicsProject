@@ -2,6 +2,7 @@ var scene;
 var camera;
 var renderer;
 var controls;
+var reflectionCube, cubeShader, cubeMaterial;
 // Albedo is our reflection
 
 function init(){
@@ -10,7 +11,53 @@ function init(){
     setupCamera();
     setupRenderer();
     setupControls();
+    setupCubeMap();
+    animate();
+}
+
+function loadTexture(texture){
+    if(reflectionCube){
+        reflectionCube.dispose();
+    }
+    loader = new THREE.CubeTextureLoader();
+    loader.setCrossOrigin("anonymous");
+    reflectionCube = loader.load(texture);
+    cubeMaterial.uniforms.tCube.value = reflectionCube;
+}
+
+function setupCubeMap(){
+    var cubeGeo = new THREE.BoxGeometry(1024,1024,1024);
+    cubeShader = THREE.ShaderLib["cube"];
+    cubeMaterial = new THREE.ShaderMaterial({
+        fragmentShader: cubeShader.fragmentShader,
+        vertexShader: cubeShader.vertexShader,
+        uniforms: cubeShader.uniforms,
+        depthWrite: false,
+        side: THREE.BackSide
+    });
+    updateTexture();
+    reflectionCube.format = THREE.RGBFormat;
     
+    var cube = new THREE.Mesh(cubeGeo, cubeMaterial);
+    scene.add(cube);
+    
+    addCircle();
+    setupLight();
+}
+
+function setupLight(){
+    var ambient = new THREE.AmbientLight( 0xffffff );
+    scene.add( ambient );
+}
+
+function addCircle(){
+    var geometry = new THREE.SphereGeometry(12, 32, 32);
+    var material = new THREE.MeshLambertMaterial({color: 0x2194ce, transparent: true, opacity: 0.5});
+    var sphere = new THREE.Mesh(geometry, material);
+    scene.add(sphere);
+}
+
+function updateTexture(){
     var path = "images/";
     var format = ".png";
     var urls = [
@@ -18,24 +65,7 @@ function init(){
         path +"py"+format, path+"ny"+format,
         path +"pz"+format, path+"nz"+format
     ];
-    var reflectionCube = new THREE.CubeTextureLoader().load( urls );
-    reflectionCube.format = THREE.RGBFormat;
-    scene.background = reflectionCube;
-    
-    var geometry = new THREE.SphereGeometry(12, 32, 32);
-    var material = new THREE.MeshLambertMaterial({color: 0x2194ce, transparent: true, opacity: 0.5});
-    var sphere = new THREE.Mesh(geometry, material);
-    scene.add(sphere);
-    //lights
-    var ambient = new THREE.AmbientLight( 0xffffff );
-    scene.add( ambient );
-    /*var reflectionCube = new THREE.CubeTextureLoader().load(urls);
-    reflectionCube.format = THREE.RGBFormat;
-    //var material = new THREE.MeshBasicMaterial({color: 0xffffff, envMap: textureCube});
-    scene.background = reflectionCube;
-    var ambient = new THREE.AmbientLight(0xffffff);
-    scene.add(ambient);*/
-    animate();
+    loadTexture(urls);
 }
 
 function animate(){
@@ -46,7 +76,7 @@ function animate(){
 
 function setupCamera(){
     camera.position.z = 2000;
-    //camera.lookAt(scene.position);
+    camera.lookAt(scene.position);
 }
 
 function setupRenderer(){
