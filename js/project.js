@@ -12,66 +12,8 @@ function init(){
     setupRenderer();
     setupControls();
     setupCubeMap();
+    window.addEventListener("resize", onWindowResize, false);
     animate();
-}
-
-function loadTexture(texture){
-    if(reflectionCube){
-        reflectionCube.dispose();
-    }
-    loader = new THREE.CubeTextureLoader();
-    loader.setCrossOrigin("anonymous");
-    reflectionCube = loader.load(texture);
-    cubeMaterial.uniforms.tCube.value = reflectionCube;
-}
-
-function setupCubeMap(){
-    var cubeGeo = new THREE.BoxGeometry(1024,1024,1024);
-    cubeShader = THREE.ShaderLib["cube"];
-    cubeMaterial = new THREE.ShaderMaterial({
-        fragmentShader: cubeShader.fragmentShader,
-        vertexShader: cubeShader.vertexShader,
-        uniforms: cubeShader.uniforms,
-        depthWrite: false,
-        side: THREE.BackSide
-    });
-    updateTexture();
-    reflectionCube.format = THREE.RGBFormat;
-    
-    var cube = new THREE.Mesh(cubeGeo, cubeMaterial);
-    scene.add(cube);
-    
-    addCircle();
-    setupLight();
-}
-
-function setupLight(){
-    var ambient = new THREE.AmbientLight( 0xffffff );
-    scene.add( ambient );
-}
-
-function addCircle(){
-    var geometry = new THREE.SphereGeometry(12, 32, 32);
-    var material = new THREE.MeshLambertMaterial({color: 0x2194ce, transparent: true, opacity: 0.5});
-    var sphere = new THREE.Mesh(geometry, material);
-    scene.add(sphere);
-}
-
-function updateTexture(){
-    var path = "images/";
-    var format = ".png";
-    var urls = [
-        path +"px"+format, path+"nx"+format,
-        path +"py"+format, path+"ny"+format,
-        path +"pz"+format, path+"nz"+format
-    ];
-    loadTexture(urls);
-}
-
-function animate(){
-    requestAnimationFrame(animate);
-    controls.update();
-    renderer.render(scene, camera);
 }
 
 function setupCamera(){
@@ -94,5 +36,69 @@ function setupControls(){
     controls.minDistance = 15;
     controls.maxDistance = 35;
 }
-window.onload = init();
 
+function setupCubeMap(){
+    var cubeGeo = new THREE.BoxGeometry(1024,1024,1024);
+    cubeShader = THREE.ShaderLib["cube"];
+    cubeMaterial = new THREE.ShaderMaterial({
+        fragmentShader: cubeShader.fragmentShader,
+        vertexShader: cubeShader.vertexShader,
+        uniforms: cubeShader.uniforms,
+        depthWrite: false,
+        side: THREE.BackSide
+    });
+    updateTexture();
+    reflectionCube.format = THREE.RGBFormat;
+    
+    var cube = new THREE.Mesh(cubeGeo, cubeMaterial);
+    scene.add(cube);
+    
+    addCircle();
+    setupLight();
+}
+
+function updateTexture(){
+    var path = "images/";
+    var format = ".png";
+    var urls = [
+        path +"px"+format, path+"nx"+format,
+        path +"py"+format, path+"ny"+format,
+        path +"pz"+format, path+"nz"+format
+    ];
+    loadTexture(urls);
+}
+
+function loadTexture(texture){
+    if(reflectionCube)
+        reflectionCube.dispose();
+    loader = new THREE.CubeTextureLoader();
+    loader.setCrossOrigin("anonymous");
+    reflectionCube = loader.load(texture);
+    cubeMaterial.uniforms.tCube.value = reflectionCube;
+}
+
+function addCircle(){
+    var geometry = new THREE.SphereGeometry(12, 32, 32);
+    var material = new THREE.MeshLambertMaterial({color: 0x2194ce, transparent: true, opacity: 0.5});
+    var sphere = new THREE.Mesh(geometry, material);
+    scene.add(sphere);
+}
+
+function setupLight(){
+    var ambient = new THREE.AmbientLight( 0xffffff );
+    scene.add( ambient );
+}
+
+function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+function animate(){
+    requestAnimationFrame(animate);
+    controls.update();
+    renderer.render(scene, camera);
+}
+
+window.onload = init();
