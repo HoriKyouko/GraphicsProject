@@ -135,7 +135,7 @@ public class IrradianceMapGenerator
 							
 							double deltaArea = 1.0 / images[curImage].getHeight() * 2.0 * 2.0 * 1.0 / images[curImage].getWidth(); 							
 							
-							double scalar = fragDot * areaDot / distanceSquared * lengthABCross * deltaArea;
+							double scalar = fragDot * areaDot / distanceSquared * deltaArea;
 							
 							//System.out.println("scalar = " + scalar);
 							
