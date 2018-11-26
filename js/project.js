@@ -16,7 +16,7 @@ function init(){
     setupRenderer(); // creates our renderer
     setupControls(); // gets our orbit control ready
     setupCubeMap("images/test/", ".png"); // creates our cubemap with the first image which is dawn
-    //preloadTextures(); // loads in all the other textures into our above renderTargets respectively.
+    preloadTextures(); // loads in all the other textures into our above renderTargets respectively.
     addCircle(); // creates a semi-opaque blue sphere inside the cube.
     setupLight(); // creates some ambient lighting.
     window.addEventListener("resize", onWindowResize, false); // allows resizing if we open developer tools.
@@ -128,7 +128,7 @@ function onWindowResize() {
 function animate(){
     requestAnimationFrame(animate);
     controls.update();
-    /*var newCubeMaterial = cubeMaterial.uniforms.tCube.value;
+    var newCubeMaterial = cubeMaterial.uniforms.tCube.value;
     switch(params.envMap){
         case "Dawn":  newCubeMaterial = dawnRenderTarget ? dawnRenderTarget : null; break;
         case "Sunrise": newCubeMaterial = sunriseRenderTarget ? sunriseRenderTarget : null; break;
@@ -142,7 +142,7 @@ function animate(){
     // Checks to see if they are the same cause we don't want to change that if it is.
     if(newCubeMaterial !== cubeMaterial.uniforms.tCube.value){
         cubeMaterial.uniforms.tCube.value = newCubeMaterial;
-    }*/
+    }
     
     renderer.render(scene, camera);
 }
