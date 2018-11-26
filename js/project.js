@@ -1,33 +1,58 @@
 var scene;
 var camera;
 var renderer;
-var controls;
-var reflectionCube, cubeShader, cubeMaterial;
-// Albedo is our reflection
+var controls; // OrbitControls
+var reflectionCube, cubeShader, cubeMaterial; // Used in our cubeMap
+var params = {
+    envMap: "Dawn"
+}; // holds a variable we change around in dat.gui
+var dawnRenderTarget, sunriseRenderTarget, morningRenderTarget, noonRenderTarget, afternoonRenderTarget, eveningRenderTarget, sunsetTarget, duskRenderTarget; // all our individual render targets probably going to make this into some object for condensing purposes.
 
+// Function to be called when we first load the file see bottom of code.
 function init(){
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 5000);
-    setupCamera();
-    setupRenderer();
-    setupControls();
-    setupCubeMap();
-    window.addEventListener("resize", onWindowResize, false);
-    animate();
+    setupCamera(); // sets our camera up.
+    setupRenderer(); // creates our renderer
+    setupControls(); // gets our orbit control ready
+    setupCubeMap("images/test/", ".png"); // creates our cubemap with the first image which is dawn
+    //preloadTextures(); // loads in all the other textures into our above renderTargets respectively.
+    addCircle(); // creates a semi-opaque blue sphere inside the cube.
+    setupLight(); // creates some ambient lighting.
+    window.addEventListener("resize", onWindowResize, false); // allows resizing if we open developer tools.
+    var gui = new dat.GUI(); // creates our gui and puts in 8 options at the moment.
+    gui.add(params, "envMap", ["Dawn", "Sunrise", "Morning", "Noon", "Afternoon", "Evening", "Sunset", "Dusk"]);
+    gui.open();
+    animate(); // finally renders.
 }
-
+// Loads in our textures by calling updateTexture.
+function preloadTextures(){
+    for(var i = 1; i <= 8; i++){
+        switch(i){
+            case 1: updateTexture("images/Dawn/", ".png", "Dawn"); break;
+            case 2: updateTexture("images/Sunrise/", ".png", "Sunrise"); break;
+            case 3: updateTexture("images/Morning/", ".png", "Morning"); break;
+            case 4: updateTexture("images/Noon/", ".png", "Noon"); break;
+            case 5: updateTexture("images/Afternoon/", ".png", "Afternoon"); break;
+            case 6: updateTexture("images/Evening/", ".png", "Evening"); break;
+            case 7: updateTexture("images/Sunset/", ".png", "Sunset"); break;
+            case 8: updateTexture("images/Dusk/", ".png", "Dusk"); break;
+        }
+    }
+}
+// Sets our camera at a location and looks at 0,0,0.
 function setupCamera(){
     camera.position.z = 2000;
     camera.lookAt(scene.position);
 }
-
+// Sets our renderer to be WebGL and sets the sizes to the screen size.
 function setupRenderer(){
     renderer = new THREE.WebGLRenderer();
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 }
-
+// Sets our orbit controls up.
 function setupControls(){
     controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
@@ -36,8 +61,8 @@ function setupControls(){
     controls.minDistance = 15;
     controls.maxDistance = 35;
 }
-
-function setupCubeMap(){
+// Sets our cubemap and cube we will be using up and calls our shaderMaterial. The later might be moved as we build on this.
+function setupCubeMap(path, format){
     var cubeGeo = new THREE.BoxGeometry(1024,1024,1024);
     cubeShader = THREE.ShaderLib["cube"];
     cubeMaterial = new THREE.ShaderMaterial({
@@ -47,57 +72,78 @@ function setupCubeMap(){
         depthWrite: false,
         side: THREE.BackSide
     });
-    updateTexture();
+    updateTexture(path, format);
     reflectionCube.format = THREE.RGBFormat;
     
     var cube = new THREE.Mesh(cubeGeo, cubeMaterial);
     scene.add(cube);
-    
-    addCircle();
-    setupLight();
 }
-
-function updateTexture(){
-    var path = "images/";
-    var format = ".png";
+// Gets our texture we want to load in as a array and alls loadTexture.
+function updateTexture(path, format, target){
     var urls = [
         path +"px"+format, path+"nx"+format,
         path +"py"+format, path+"ny"+format,
         path +"pz"+format, path+"nz"+format
     ];
-    loadTexture(urls);
+    loadTexture(urls, target);
 }
-
-function loadTexture(texture){
+// Loads our texture in using CubeTextureLoader and stores the values into reflectionCube. Also depending on the target we will pass refelection cube values to the respective renderTarget.
+function loadTexture(texture, target){
     if(reflectionCube)
         reflectionCube.dispose();
     loader = new THREE.CubeTextureLoader();
     loader.setCrossOrigin("anonymous");
     reflectionCube = loader.load(texture);
+    switch(target){
+        case "Dawn": dawnRenderTarget = reflectionCube; break;
+        case "Sunrise": sunriseRenderTarget = reflectionCube; break;
+        case "Morning": morningRenderTarget = reflectionCube; break;
+        case "Noon": noonRenderTarget = reflectionCube; break;
+        case "Afternoon": afternoonRenderTarget = reflectionCube; break;
+        case "Evening": eveningRenderTarget = reflectionCube; break;
+        case "Sunset": sunsetTarget = reflectionCube; break;
+        case "Dusk": duskRenderTarget = reflectionCube; break;
+    }
     cubeMaterial.uniforms.tCube.value = reflectionCube;
 }
-
+// Adds our semi-opaque blue sphere to the scene.
 function addCircle(){
-    var geometry = new THREE.SphereGeometry(12, 32, 32);
+    var geometry = new THREE.SphereGeometry(8, 32, 32);
     var material = new THREE.MeshLambertMaterial({color: 0x2194ce, transparent: true, opacity: 0.5});
     var sphere = new THREE.Mesh(geometry, material);
     scene.add(sphere);
 }
-
+// Adds our white ambient light to the scene.
 function setupLight(){
     var ambient = new THREE.AmbientLight( 0xffffff );
     scene.add( ambient );
 }
-
+// Resizes the camera everytime we change the viewing size.
 function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
-
+// Renders everything on screen and checks to see if we have changed our envMap in params to a different renderTarget.
 function animate(){
     requestAnimationFrame(animate);
     controls.update();
+    /*var newCubeMaterial = cubeMaterial.uniforms.tCube.value;
+    switch(params.envMap){
+        case "Dawn":  newCubeMaterial = dawnRenderTarget ? dawnRenderTarget : null; break;
+        case "Sunrise": newCubeMaterial = sunriseRenderTarget ? sunriseRenderTarget : null; break;
+        case "Morning":  newCubeMaterial = morningRenderTarget ? morningRenderTarget : null; break;
+        case "Noon": newCubeMaterial = noonRenderTarget ? noonRenderTarget : null; break;
+        case "Afternoon":  newCubeMaterial = afternoonRenderTarget ? afternoonRenderTarget : null; break;
+        case "Evening": newCubeMaterial = eveningRenderTarget ? eveningRenderTarget : null; break;
+        case "Sunset":  newCubeMaterial = sunsetTarget ? sunsetTarget : null; break;
+        case "Dusk": newCubeMaterial = duskRenderTarget ? duskRenderTarget : null; break;
+    }
+    // Checks to see if they are the same cause we don't want to change that if it is.
+    if(newCubeMaterial !== cubeMaterial.uniforms.tCube.value){
+        cubeMaterial.uniforms.tCube.value = newCubeMaterial;
+    }*/
+    
     renderer.render(scene, camera);
 }
 
