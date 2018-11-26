@@ -45,36 +45,42 @@ public class IrradianceMapGenerator
 				B[curImage][0] = -1.0; B[curImage][1] = -1.0; B[curImage][2] = -1.0;
 				C[curImage][0] = -1.0; C[curImage][1] = 1.0; C[curImage][2] = -1.0;
 				D[curImage][0] = -1.0; D[curImage][1] = 1.0; D[curImage][2] = 1.0;
+				//faceNormal[curImage][0] = 1.0; faceNormal[curImage][1] = 0.0; faceNormal[curImage][2] = 0.0;  
 				break;
 			case 1:
 				A[curImage][0] = -1.0; A[curImage][1] = -1.0; A[curImage][2] = 1.0;
 				B[curImage][0] = 1.0; B[curImage][1] = -1.0; B[curImage][2] = 1.0;
 				C[curImage][0] = 1.0; C[curImage][1] = -1.0; C[curImage][2] = -1.0;
 				D[curImage][0] = -1.0; D[curImage][1] = -1.0; D[curImage][2] = -1.0;
+				//faceNormal[curImage][0] = 0.0; faceNormal[curImage][1] = 1.0; faceNormal[curImage][2] = 0.0;
 				break;
 			case 2:
 				A[curImage][0] = -1.0; A[curImage][1] = -1.0; A[curImage][2] = -1.0;
 				B[curImage][0] = 1.0; B[curImage][1] = -1.0; B[curImage][2] = -1.0;
 				C[curImage][0] = 1.0; C[curImage][1] = 1.0; C[curImage][2] = -1.0;
 				D[curImage][0] = -1.0; D[curImage][1] = 1.0; D[curImage][2] = -1.0;
+				//faceNormal[curImage][0] = 0.0; faceNormal[curImage][1] = 0.0; faceNormal[curImage][2] = 1.0;
 				break;
 			case 3:
 				A[curImage][0] = 1.0; A[curImage][1] = -1.0; A[curImage][2] = 1.0;
 				B[curImage][0] = 1.0; B[curImage][1] = -1.0; B[curImage][2] = -1.0;
 				C[curImage][0] = 1.0; C[curImage][1] = 1.0; C[curImage][2] = -1.0;
 				D[curImage][0] = 1.0; D[curImage][1] = 1.0; D[curImage][2] = 1.0;
+				//faceNormal[curImage][0] = -1.0; faceNormal[curImage][1] = 0.0; faceNormal[curImage][2] = 0.0;
 				break;
 			case 4:
 				A[curImage][0] = -1.0; A[curImage][1] = 1.0; A[curImage][2] = -1.0;
 				B[curImage][0] = 1.0; B[curImage][1] = 1.0; B[curImage][2] = -1.0;
 				C[curImage][0] = 1.0; C[curImage][1] = 1.0; C[curImage][2] = 1.0;
 				D[curImage][0] = -1.0; D[curImage][1] = 1.0; D[curImage][2] = 1.0;
+				//faceNormal[curImage][0] = 0.0; faceNormal[curImage][1] = -1.0; faceNormal[curImage][2] = 0.0;
 				break;
 			case 5:
 				A[curImage][0] = -1.0; A[curImage][1] = -1.0; A[curImage][2] = 1.0;
 				B[curImage][0] = 1.0; B[curImage][1] = -1.0; B[curImage][2] = 1.0;
 				C[curImage][0] = 1.0; C[curImage][1] = 1.0; C[curImage][2] = 1.0;
 				D[curImage][0] = -1.0; D[curImage][1] = 1.0; D[curImage][2] = 1.0;
+				//faceNormal[curImage][0] = 0.0; faceNormal[curImage][1] = 0.0; faceNormal[curImage][2] = -1.0;
 				break;
 			}// End switch for the image type to determine the corners of the face
 			
@@ -133,10 +139,10 @@ public class IrradianceMapGenerator
 							
 							//System.out.println("scalar = " + scalar);
 							
-							color[0] = (double)curColor.getRed() * scalar;
-							color[1] = (double)curColor.getGreen() * scalar;
-							color[2] = (double)curColor.getBlue() * scalar;
-							color[3] = (double)curColor.getAlpha() * scalar;
+							color[0] += (double)curColor.getRed() * scalar;
+							color[1] += (double)curColor.getGreen() * scalar;
+							color[2] += (double)curColor.getBlue() * scalar;
+							color[3] += (double)curColor.getAlpha() * scalar;
 						}// End current width loop on the image
 					}// End current height loop on the image
 				}// End current Image loop
@@ -273,33 +279,33 @@ public class IrradianceMapGenerator
 		{
 		case 0:
 			returnValue[0] = -1.0;
-			returnValue[0] = x;
-			returnValue[0] = y;
+			returnValue[1] = x;
+			returnValue[2] = y;
 			break;
 		case 1:
 			returnValue[0] = x;
-			returnValue[0] = -1.0;
-			returnValue[0] = y;
+			returnValue[1] = -1.0;
+			returnValue[2] = y;
 			break;
 		case 2:
 			returnValue[0] = x;
-			returnValue[0] = y;
-			returnValue[0] = -1.0;
+			returnValue[1] = y;
+			returnValue[2] = -1.0;
 			break;
 		case 3:
 			returnValue[0] = 1.0;
-			returnValue[0] = x;
-			returnValue[0] = y;
+			returnValue[1] = x;
+			returnValue[2] = y;
 			break;
 		case 4:
 			returnValue[0] = x;
-			returnValue[0] = 1.0;
-			returnValue[0] = y;
+			returnValue[1] = 1.0;
+			returnValue[2] = y;
 			break;
 		case 5:
 			returnValue[0] = x;
-			returnValue[0] = y;
-			returnValue[0] = 1.0;
+			returnValue[1] = y;
+			returnValue[2] = 1.0;
 			break;
 		}
 		
