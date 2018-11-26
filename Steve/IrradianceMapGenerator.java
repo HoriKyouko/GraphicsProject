@@ -147,17 +147,17 @@ public class IrradianceMapGenerator
 					}// End current height loop on the image
 				}// End current Image loop
 				
-				System.out.println(color[0] + " " + color[1] + " " + color[2] + " " + color[3]);
+				//System.out.println(color[0] + " " + color[1] + " " + color[2] + " " + color[3]);
 				
 				finalArray[phi * 720 + theta * 4 + 0] = (int)Math.max(Math.min(color[0], 255.0), 0.0);
 				finalArray[phi * 720 + theta * 4 + 1] = (int)Math.max(Math.min(color[1], 255.0), 0.0);
 				finalArray[phi * 720 + theta * 4 + 2] = (int)Math.max(Math.min(color[2], 255.0), 0.0);
 				finalArray[phi * 720 + theta * 4 + 3] = (int)Math.max(Math.min(color[3], 255.0), 0.0);
 				
-				System.out.println(phi * 720 + theta * 4 + 0 + " " + finalArray[phi * 720 + theta * 4 + 0]);
+				/*System.out.println(phi * 720 + theta * 4 + 0 + " " + finalArray[phi * 720 + theta * 4 + 0]);
 				System.out.println(phi * 720 + theta * 4 + 1 + " " + finalArray[phi * 720 + theta * 4 + 1]);
 				System.out.println(phi * 720 + theta * 4 + 2 + " " + finalArray[phi * 720 + theta * 4 + 2]);
-				System.out.println(phi * 720 + theta * 4 + 3 + " " + finalArray[phi * 720 + theta * 4 + 3]);
+				System.out.println(phi * 720 + theta * 4 + 3 + " " + finalArray[phi * 720 + theta * 4 + 3]);*/
 				
 			}// End theta loop for the normal
 		}// End phi loop for the normal
