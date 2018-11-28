@@ -90,14 +90,20 @@ public class IrradianceMapGenerator
 			faceNormal[curImage] = normalize(crossVector3(AB[curImage], AD[curImage]));
 		}// This ends the for loop for the faces
 		
-		// Create the array that will store the irradiance map
-		int[] finalArray = new int[360 * 180 * 4];
+		int deltaphi = 72;
+		int deltatheta = 36;
 		
-		for (int phi = 0; phi < 360; phi++)
+		// Create the array that will store the irradiance map
+		//int[] finalArray = new int[360 * 180 * 4];
+		int[] finalArray = new int[deltaphi * deltatheta * 3];
+		
+		int maxColor = 0;
+		
+		for (int phi = 0; phi < deltaphi; phi++)
 		{
 			System.out.println("phi = " + phi);
 			
-			for (int theta = 0; theta < 180; theta++)
+			for (int theta = 0; theta < deltatheta; theta++)
 			{	
 				double[] color = new double[4];
 				
@@ -112,7 +118,7 @@ public class IrradianceMapGenerator
 							
 							double[] imagePosition = getImagePos(curImage, x, y);
 							
-							double[] curFragNormal = getNormalfromAngles(theta, phi);
+							double[] curFragNormal = getNormalfromAngles((double)theta * 5, (double)phi * 5);
 							
 							double[] fragPosition = {0.0, 0.0, 0.0};
 							
@@ -135,7 +141,7 @@ public class IrradianceMapGenerator
 							
 							double deltaArea = 1.0 / images[curImage].getHeight() * 2.0 * 2.0 * 1.0 / images[curImage].getWidth(); 							
 							
-							double scalar = fragDot * areaDot / distanceSquared * deltaArea;
+							double scalar = fragDot * areaDot / distanceSquared * lengthABCross * deltaArea;
 							
 							//System.out.println("scalar = " + scalar);
 							
@@ -149,10 +155,24 @@ public class IrradianceMapGenerator
 				
 				//System.out.println(color[0] + " " + color[1] + " " + color[2] + " " + color[3]);
 				
-				finalArray[phi * 720 + theta * 4 + 0] = (int)Math.max(Math.min(color[0], 255.0), 0.0);
-				finalArray[phi * 720 + theta * 4 + 1] = (int)Math.max(Math.min(color[1], 255.0), 0.0);
-				finalArray[phi * 720 + theta * 4 + 2] = (int)Math.max(Math.min(color[2], 255.0), 0.0);
-				finalArray[phi * 720 + theta * 4 + 3] = (int)Math.max(Math.min(color[3], 255.0), 0.0);
+				/*finalArray[phi * (4*deltatheta) + theta * 4 + 0] = (int)color[0];
+				finalArray[phi * (4*deltatheta) + theta * 4 + 1] = (int)color[1];
+				finalArray[phi * (4*deltatheta) + theta * 4 + 2] = (int)color[2];
+				finalArray[phi * (4*deltatheta) + theta * 4 + 2] = (int)color[3];*/
+				
+				finalArray[phi * (3*deltatheta) + theta * 3 + 0] = (int)color[0];
+				finalArray[phi * (3*deltatheta) + theta * 3 + 1] = (int)color[1];
+				finalArray[phi * (3*deltatheta) + theta * 3 + 2] = (int)color[2];
+				
+				int curMax = (int)Math.max(Math.max(color[0], color[1]), color[2]);
+				//int curMax = (int)Math.max(Math.max(Math.max(color[0], color[1]), color[2]), color[3]);
+				
+				if (curMax > maxColor)
+				{
+					maxColor = curMax;
+					
+					//System.out.println(maxColor);
+				}
 				
 				/*System.out.println(phi * 720 + theta * 4 + 0 + " " + finalArray[phi * 720 + theta * 4 + 0]);
 				System.out.println(phi * 720 + theta * 4 + 1 + " " + finalArray[phi * 720 + theta * 4 + 1]);
@@ -168,6 +188,12 @@ public class IrradianceMapGenerator
 		
 			for (int i = 0; i < finalArray.length; i++)
 			{
+				//System.out.println(finalArray[i]);
+				
+				finalArray[i] = (int)(((double)finalArray[i] / (double)maxColor) * 255.0);
+				
+				//System.out.println(finalArray[i]);
+				
 				if (i == 0)
 				{
 					out.print("[" + finalArray[i] + ", ");
@@ -250,12 +276,12 @@ public class IrradianceMapGenerator
 		return returnVector;
 	}
 	
-	public static double[] getNormalfromAngles(int theta, int phi)
+	public static double[] getNormalfromAngles(double theta, double phi)
 	{
 		double[] returnValue = new double[3];
 		
-		double radTheta = (double)theta / 180.0;
-		double radPhi = (double)phi / 180.0;
+		double radTheta = theta / 180.0;
+		double radPhi = phi / 180.0;
 		
 		returnValue[0] = Math.cos(radPhi) * Math.sin(radTheta);
 		returnValue[1] = Math.sin(radPhi) * Math.sin(radTheta);
