@@ -8,6 +8,19 @@ var params = {
 }; // holds a variable we change around in dat.gui
 var dawnRenderTarget, sunriseRenderTarget, morningRenderTarget, noonRenderTarget, afternoonRenderTarget, eveningRenderTarget, sunsetTarget, duskRenderTarget; // all our individual render targets probably going to make this into some object for condensing purposes.
 
+let lambo ={
+    //mtlPathName:"objects/",
+    objPathName: "objects/",
+    //texturePathName: "objects/",
+    //mtlFileName: "Lamborghini_Aventador.mtl",
+    objFileName: "Lamborghini_Aventador.obj",
+    scale: 40,
+    y_rotate: 0,
+    translateVector: new THREE.Vector3(0,0,0),
+    obj: undefined,
+    name: "lambo"
+};
+
 // Function to be called when we first load the file see bottom of code.
 function init(){
     scene = new THREE.Scene();
@@ -17,12 +30,13 @@ function init(){
     setupControls(); // gets our orbit control ready
     setupCubeMap("images/test/", ".png"); // creates our cubemap with the first image which is dawn
     preloadTextures(); // loads in all the other textures into our above renderTargets respectively.
-    addCircle(); // creates a semi-opaque blue sphere inside the cube.
+    //addCircle(); // creates a semi-opaque blue sphere inside the cube.
     setupLight(); // creates some ambient lighting.
     window.addEventListener("resize", onWindowResize, false); // allows resizing if we open developer tools.
     var gui = new dat.GUI(); // creates our gui and puts in 8 options at the moment.
     gui.add(params, "envMap", ["Dawn", "Sunrise", "Morning", "Noon", "Afternoon", "Evening", "Sunset", "Dusk"]);
     gui.open();
+    addObjToSceneAndRender(lambo, scene, renderer);
     animate(); // finally renders.
 }
 // Loads in our textures by calling updateTexture.
@@ -124,6 +138,58 @@ function onWindowResize() {
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
+
+function addObjToSceneAndRender(objectInfo, scene, render) {
+
+	if (!objectInfo.objFileName) {
+		console.log("Missing Object file");
+	}
+	let objLoader = new THREE.OBJLoader();
+	if (objectInfo.objPathName) objLoader.setPath(objectInfo.objPathName);
+	if (objectInfo.mtlPathName) 
+	{
+		let mtlLoader = new THREE.MTLLoader();
+		mtlLoader.setPath(objectInfo.mtlPathName);
+		if (objectInfo.texturePathName) 	
+			mtlLoader.setTexturePath(objectInfo.texturePathName);
+		mtlLoader.load(objectInfo.mtlFileName, onMtlLoad);
+	}
+	else objLoader.load(objectInfo.objFileName, onObjLoad);
+		
+	function onMtlLoad(mtl) {
+	  mtl.preload();
+	  objLoader.setMaterials(mtl);
+	  objLoader.load(objectInfo.objFileName, onObjLoad);
+	}
+
+	// called when resource is loaded
+	function onObjLoad(object) {
+        //object.children.forEach(function(e){e.material = normalMaterial;});
+        let bBox = new THREE.Box3().setFromObject(object);
+        let size = new THREE.Vector3();
+        bBox.getSize(size);
+        let maxBaseSize = Math.max(size.x, size.z);
+        let scaleFactor = ((objectInfo.scale)?objectInfo.scale:1)/ maxBaseSize;
+        object.scale.multiplyScalar(scaleFactor);
+        if (objectInfo.y_rotate) object.rotateY(objectInfo.y_rotate);
+        if (objectInfo.translateVector) object.position.copy(objectInfo.translateVector);
+        objectInfo.obj = object;
+        objectInfo.obj.children.length = 6;
+        for(var i = 0; i < 6; i++){
+            objectInfo.obj.children[i].material = new THREE.MeshPhongMaterial( { color: 0xffffff, shininess: 100, envMap: reflectionCube} );
+        }
+        scene.add(object);
+        animate();
+	}
+}
+
+function updateObjectMaterial(object, material){
+	if (object.material) object.material = material;
+	else if (object.children)
+		object.children.forEach(function(e){e.material = material;});
+	else alert("Error: Object does not have material property.");
+}
+
 // Renders everything on screen and checks to see if we have changed our envMap in params to a different renderTarget.
 function animate(){
     requestAnimationFrame(animate);
