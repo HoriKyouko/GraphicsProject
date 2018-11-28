@@ -2,7 +2,7 @@ var scene;
 var camera;
 var renderer;
 var controls; // OrbitControls
-var reflectionCube, cubeShader, cubeMaterial; // Used in our cubeMap
+var reflectionCube, cubeShader, cubeMaterial, newCubeMaterial; // Used in our cubeMap
 var params = {
     envMap: "Dawn"
 }; // holds a variable we change around in dat.gui
@@ -176,7 +176,7 @@ function addObjToSceneAndRender(objectInfo, scene, render) {
         objectInfo.obj = object;
         objectInfo.obj.children.length = 6;
         for(var i = 0; i < 6; i++){
-            objectInfo.obj.children[i].material = new THREE.MeshPhongMaterial( { color: 0xffffff, shininess: 100, envMap: reflectionCube} );
+            objectInfo.obj.children[i].material = new THREE.MeshPhongMaterial( { color: 0xffffff, shininess: 100, envMap: newCubeMaterial} );
         }
         scene.add(object);
         animate();
@@ -194,7 +194,7 @@ function updateObjectMaterial(object, material){
 function animate(){
     requestAnimationFrame(animate);
     controls.update();
-    var newCubeMaterial = cubeMaterial.uniforms.tCube.value;
+    newCubeMaterial = cubeMaterial.uniforms.tCube.value;
     switch(params.envMap){
         case "Dawn":  newCubeMaterial = dawnRenderTarget ? dawnRenderTarget : null; break;
         case "Sunrise": newCubeMaterial = sunriseRenderTarget ? sunriseRenderTarget : null; break;
@@ -208,6 +208,7 @@ function animate(){
     // Checks to see if they are the same cause we don't want to change that if it is.
     if(newCubeMaterial !== cubeMaterial.uniforms.tCube.value){
         cubeMaterial.uniforms.tCube.value = newCubeMaterial;
+        updateObjectMaterial(lambo.obj, new THREE.MeshPhongMaterial({color: 0xffffff, shininess:100, envMap: newCubeMaterial}));
     }
     
     renderer.render(scene, camera);
