@@ -7,6 +7,7 @@ var params = {
     envMap: "Dawn"
 }; // holds a variable we change around in dat.gui
 var dawnRenderTarget, sunriseRenderTarget, morningRenderTarget, noonRenderTarget, afternoonRenderTarget, eveningRenderTarget, sunsetTarget, duskRenderTarget; // all our individual render targets probably going to make this into some object for condensing purposes.
+var dawnMaterial, sunriseMaterial, morningMaterial, noonMaterial, afternoonMaterial, eveningMaterial, sunsetMaterial, duskMaterial, myMaterial;
 
 
 
@@ -15,8 +16,7 @@ var dawnRenderTarget, sunriseRenderTarget, morningRenderTarget, noonRenderTarget
 
 
 
-
-var lightMap = readFromFile("images/Dawn/dawn.out");
+/*var lightMap = readFromFile("images/Dawn/dawn.out");
 lightMap = lightMap.split(", ");
 // HAVE TO MAKE LIGHTMAP!!!
 let data = Uint8Array.from(lightMap);
@@ -30,7 +30,7 @@ let myMaterial = new THREE.RawShaderMaterial({
     },
     fragmentShader: readFromFile("Assignment5-18.fs"),
     vertexShader: readFromFile("Assignment5.vs")
-});
+});*/
 
 
 
@@ -83,16 +83,139 @@ function init(){
 }
 // Loads in our textures by calling updateTexture.
 function preloadTextures(){
+    let data;
+    let dataTexture;
+    let lightMap;
     for(var i = 1; i <= 8; i++){
         switch(i){
-            case 1: updateTexture("images/Dawn/", ".png", "Dawn"); break;
-            case 2: updateTexture("images/Sunrise/", ".png", "Sunrise"); break;
-            case 3: updateTexture("images/Morning/", ".png", "Morning"); break;
-            case 4: updateTexture("images/Noon/", ".png", "Noon"); break;
-            case 5: updateTexture("images/Afternoon/", ".png", "Afternoon"); break;
-            case 6: updateTexture("images/Evening/", ".png", "Evening"); break;
-            case 7: updateTexture("images/Sunset/", ".png", "Sunset"); break;
-            case 8: updateTexture("images/Dusk/", ".png", "Dusk"); break;
+            case 1:
+                lightMap = readFromFile("images/Dawn/dawn.out");
+                lightMap = lightMap.split(", ");
+                data = Uint8Array.from(lightMap);
+                dataTexture = new THREE.DataTexture(data, 72, 36, THREE.RGBFormat, THREE.UnsignedByteType, THREE.UVMapping);
+                dataTexture.needsUpdate = true;
+                dawnMaterial = new THREE.RawShaderMaterial({
+                    side: THREE.DoubleSide,
+                    uniforms:{
+                        diffuseColor: {value: new THREE.Color(0xffffff)},
+                        texture: {value: dataTexture}
+                    },
+                    fragmentShader: readFromFile("Assignment5-18.fs"),
+                    vertexShader: readFromFile("Assignment5.vs")
+                });
+                updateTexture("images/Dawn/", ".png", "Dawn"); break;
+            case 2:
+                lightMap = readFromFile("images/Sunrise/sunrise.out");
+                lightMap = lightMap.split(", ");
+                data = Uint8Array.from(lightMap);
+                dataTexture = new THREE.DataTexture(data, 72, 36, THREE.RGBFormat, THREE.UnsignedByteType, THREE.UVMapping);
+                dataTexture.needsUpdate = true;
+                sunriseMaterial = new THREE.RawShaderMaterial({
+                    side: THREE.DoubleSide,
+                    uniforms:{
+                        diffuseColor: {value: new THREE.Color(0xffffff)},
+                        texture: {value: dataTexture}
+                    },
+                    fragmentShader: readFromFile("Assignment5-18.fs"),
+                    vertexShader: readFromFile("Assignment5.vs")
+                });
+                updateTexture("images/Sunrise/", ".png", "Sunrise"); break;
+            case 3:
+                lightMap = readFromFile("images/Morning/morning.out");
+                lightMap = lightMap.split(", ");
+                data = Uint8Array.from(lightMap);
+                dataTexture = new THREE.DataTexture(data, 72, 36, THREE.RGBFormat, THREE.UnsignedByteType, THREE.UVMapping);
+                dataTexture.needsUpdate = true;
+                morningMaterial = new THREE.RawShaderMaterial({
+                    side: THREE.DoubleSide,
+                    uniforms:{
+                        diffuseColor: {value: new THREE.Color(0xffffff)},
+                        texture: {value: dataTexture}
+                    },
+                    fragmentShader: readFromFile("Assignment5-18.fs"),
+                    vertexShader: readFromFile("Assignment5.vs")
+                });
+                updateTexture("images/Morning/", ".png", "Morning"); break;
+            case 4:
+                lightMap = readFromFile("images/Noon/noon.out");
+                lightMap = lightMap.split(", ");
+                data = Uint8Array.from(lightMap);
+                dataTexture = new THREE.DataTexture(data, 72, 36, THREE.RGBFormat, THREE.UnsignedByteType, THREE.UVMapping);
+                dataTexture.needsUpdate = true;
+                noonMaterial = new THREE.RawShaderMaterial({
+                    side: THREE.DoubleSide,
+                    uniforms:{
+                        diffuseColor: {value: new THREE.Color(0xffffff)},
+                        texture: {value: dataTexture}
+                    },
+                    fragmentShader: readFromFile("Assignment5-18.fs"),
+                    vertexShader: readFromFile("Assignment5.vs")
+                });
+                updateTexture("images/Noon/", ".png", "Noon"); break;
+            case 5:
+                lightMap = readFromFile("images/Afternoon/afternoon.out");
+                lightMap = lightMap.split(", ");
+                data = Uint8Array.from(lightMap);
+                dataTexture = new THREE.DataTexture(data, 72, 36, THREE.RGBFormat, THREE.UnsignedByteType, THREE.UVMapping);
+                dataTexture.needsUpdate = true;
+                afternoonMaterial = new THREE.RawShaderMaterial({
+                    side: THREE.DoubleSide,
+                    uniforms:{
+                        diffuseColor: {value: new THREE.Color(0xffffff)},
+                        texture: {value: dataTexture}
+                    },
+                    fragmentShader: readFromFile("Assignment5-18.fs"),
+                    vertexShader: readFromFile("Assignment5.vs")
+                });
+                updateTexture("images/Afternoon/", ".png", "Afternoon"); break;
+            case 6:
+                lightMap = readFromFile("images/Evening/evening.out");
+                lightMap = lightMap.split(", ");
+                data = Uint8Array.from(lightMap);
+                dataTexture = new THREE.DataTexture(data, 72, 36, THREE.RGBFormat, THREE.UnsignedByteType, THREE.UVMapping);
+                dataTexture.needsUpdate = true;
+                eveningMaterial = new THREE.RawShaderMaterial({
+                    side: THREE.DoubleSide,
+                    uniforms:{
+                        diffuseColor: {value: new THREE.Color(0xffffff)},
+                        texture: {value: dataTexture}
+                    },
+                    fragmentShader: readFromFile("Assignment5-18.fs"),
+                    vertexShader: readFromFile("Assignment5.vs")
+                });
+                updateTexture("images/Evening/", ".png", "Evening"); break;
+            case 7:
+                lightMap = readFromFile("images/Sunset/sunset.out");
+                lightMap = lightMap.split(", ");
+                data = Uint8Array.from(lightMap);
+                dataTexture = new THREE.DataTexture(data, 72, 36, THREE.RGBFormat, THREE.UnsignedByteType, THREE.UVMapping);
+                dataTexture.needsUpdate = true;
+                sunsetMaterial = new THREE.RawShaderMaterial({
+                    side: THREE.DoubleSide,
+                    uniforms:{
+                        diffuseColor: {value: new THREE.Color(0xffffff)},
+                        texture: {value: dataTexture}
+                    },
+                    fragmentShader: readFromFile("Assignment5-18.fs"),
+                    vertexShader: readFromFile("Assignment5.vs")
+                });
+                updateTexture("images/Sunset/", ".png", "Sunset"); break;
+            case 8:
+                lightMap = readFromFile("images/Dusk/dusk.out");
+                lightMap = lightMap.split(", ");
+                data = Uint8Array.from(lightMap);
+                dataTexture = new THREE.DataTexture(data, 72, 36, THREE.RGBFormat, THREE.UnsignedByteType, THREE.UVMapping);
+                dataTexture.needsUpdate = true;
+                duskMaterial = new THREE.RawShaderMaterial({
+                    side: THREE.DoubleSide,
+                    uniforms:{
+                        diffuseColor: {value: new THREE.Color(0xffffff)},
+                        texture: {value: dataTexture}
+                    },
+                    fragmentShader: readFromFile("Assignment5-18.fs"),
+                    vertexShader: readFromFile("Assignment5.vs")
+                });
+                updateTexture("images/Dusk/", ".png", "Dusk"); break;
         }
     }
 }
@@ -218,7 +341,7 @@ function addObjToSceneAndRender(objectInfo, scene, render) {
         objectInfo.obj = object;
         objectInfo.obj.children.length = 6;
         for(var i = 0; i < 6; i++){
-            objectInfo.obj.children[i].material = new THREE.MeshPhongMaterial( { color: 0xffffff, shininess: 100, envMap: newCubeMaterial} );
+            objectInfo.obj.children[i].material = myMaterial;
         }
         scene.add(object);
         animate();
@@ -251,19 +374,19 @@ function animate(){
     controls.update();
     newCubeMaterial = cubeMaterial.uniforms.tCube.value;
     switch(params.envMap){
-        case "Dawn":  newCubeMaterial = dawnRenderTarget ? dawnRenderTarget : null; break;
-        case "Sunrise": newCubeMaterial = sunriseRenderTarget ? sunriseRenderTarget : null; break;
-        case "Morning":  newCubeMaterial = morningRenderTarget ? morningRenderTarget : null; break;
-        case "Noon": newCubeMaterial = noonRenderTarget ? noonRenderTarget : null; break;
-        case "Afternoon":  newCubeMaterial = afternoonRenderTarget ? afternoonRenderTarget : null; break;
-        case "Evening": newCubeMaterial = eveningRenderTarget ? eveningRenderTarget : null; break;
-        case "Sunset":  newCubeMaterial = sunsetTarget ? sunsetTarget : null; break;
-        case "Dusk": newCubeMaterial = duskRenderTarget ? duskRenderTarget : null; break;
+        case "Dawn":  newCubeMaterial = dawnRenderTarget ? dawnRenderTarget : null; myMaterial = dawnMaterial; break;
+        case "Sunrise": newCubeMaterial = sunriseRenderTarget ? sunriseRenderTarget : null; myMaterial = sunriseMaterial; break;
+        case "Morning":  newCubeMaterial = morningRenderTarget ? morningRenderTarget : null; myMaterial = morningMaterial; break;
+        case "Noon": newCubeMaterial = noonRenderTarget ? noonRenderTarget : null; myMaterial = noonMaterial; break;
+        case "Afternoon":  newCubeMaterial = afternoonRenderTarget ? afternoonRenderTarget : null; myMaterial = afternoonMaterial; break;
+        case "Evening": newCubeMaterial = eveningRenderTarget ? eveningRenderTarget : null; myMaterial = eveningMaterial; break;
+        case "Sunset":  newCubeMaterial = sunsetTarget ? sunsetTarget : null; myMaterial = sunsetMaterial; break;
+        case "Dusk": newCubeMaterial = duskRenderTarget ? duskRenderTarget : null; myMaterial = duskMaterial; break;
     }
     // Checks to see if they are the same cause we don't want to change that if it is.
     if(newCubeMaterial !== cubeMaterial.uniforms.tCube.value){
         cubeMaterial.uniforms.tCube.value = newCubeMaterial;
-        updateObjectMaterial(lambo.obj, new THREE.MeshPhongMaterial({color: 0xffffff, shininess:100, envMap: newCubeMaterial}));
+        updateObjectMaterial(lambo.obj, myMaterial);
     }
     
     renderer.render(scene, camera);
