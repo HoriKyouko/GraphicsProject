@@ -277,8 +277,8 @@ function setupLight(){
     pointLight = new THREE.PointLight( 0xffffff);
     dirLight = new THREE.DirectionalLight(0x731899);
     pointLight.position.set(512, 0, -512);
-    scene.add(pointLight);
-    scene.add(dirLight);
+    //scene.add(pointLight);
+    //scene.add(dirLight);
 }
 // Resizes the camera everytime we change the viewing size.
 function onWindowResize() {
@@ -379,6 +379,7 @@ function animate(){
         cubeMaterial.uniforms.tCube.value = newCubeMaterial;
         updateObjectMaterial(lambo.obj, myMaterial);
         updateObjectMaterial(mercedes.obj, new THREE.MeshPhongMaterial({color: 0xffffff, shininess:20, envMap: newCubeMaterial}));
+        //updateObjectMaterial(sph, myMaterial);
         sph.material = new THREE.MeshPhongMaterial({color: 0xffffff, shininess:100, envMap: newCubeMaterial});
         sph.needsUpdate = true;
     }
