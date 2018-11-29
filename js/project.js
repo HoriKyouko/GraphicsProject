@@ -379,8 +379,8 @@ function animate(){
         cubeMaterial.uniforms.tCube.value = newCubeMaterial;
         updateObjectMaterial(lambo.obj, myMaterial);
         updateObjectMaterial(mercedes.obj, new THREE.MeshPhongMaterial({color: 0xffffff, shininess:20, envMap: newCubeMaterial}));
-        //updateObjectMaterial(sph, myMaterial);
-        sph.material = new THREE.MeshPhongMaterial({color: 0xffffff, shininess:100, envMap: newCubeMaterial});
+        updateObjectMaterial(sph, myMaterial);
+        //sph.material = new THREE.MeshPhongMaterial({color: 0xffffff, shininess:100, envMap: newCubeMaterial});
         sph.needsUpdate = true;
     }
     if(mercedes.obj !== undefined){

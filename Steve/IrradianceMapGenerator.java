@@ -45,49 +45,49 @@ public class IrradianceMapGenerator
 				B[curImage][0] = -1.0; B[curImage][1] = -1.0; B[curImage][2] = -1.0;
 				C[curImage][0] = -1.0; C[curImage][1] = 1.0; C[curImage][2] = -1.0;
 				D[curImage][0] = -1.0; D[curImage][1] = 1.0; D[curImage][2] = 1.0;
-				//faceNormal[curImage][0] = 1.0; faceNormal[curImage][1] = 0.0; faceNormal[curImage][2] = 0.0;  
+				faceNormal[curImage][0] = 1.0; faceNormal[curImage][1] = 0.0; faceNormal[curImage][2] = 0.0;  
 				break;
 			case 1:
 				A[curImage][0] = -1.0; A[curImage][1] = -1.0; A[curImage][2] = 1.0;
 				B[curImage][0] = 1.0; B[curImage][1] = -1.0; B[curImage][2] = 1.0;
 				C[curImage][0] = 1.0; C[curImage][1] = -1.0; C[curImage][2] = -1.0;
 				D[curImage][0] = -1.0; D[curImage][1] = -1.0; D[curImage][2] = -1.0;
-				//faceNormal[curImage][0] = 0.0; faceNormal[curImage][1] = 1.0; faceNormal[curImage][2] = 0.0;
+				faceNormal[curImage][0] = 0.0; faceNormal[curImage][1] = 1.0; faceNormal[curImage][2] = 0.0;
 				break;
 			case 2:
 				A[curImage][0] = -1.0; A[curImage][1] = -1.0; A[curImage][2] = -1.0;
 				B[curImage][0] = 1.0; B[curImage][1] = -1.0; B[curImage][2] = -1.0;
 				C[curImage][0] = 1.0; C[curImage][1] = 1.0; C[curImage][2] = -1.0;
 				D[curImage][0] = -1.0; D[curImage][1] = 1.0; D[curImage][2] = -1.0;
-				//faceNormal[curImage][0] = 0.0; faceNormal[curImage][1] = 0.0; faceNormal[curImage][2] = 1.0;
+				faceNormal[curImage][0] = 0.0; faceNormal[curImage][1] = 0.0; faceNormal[curImage][2] = 1.0;
 				break;
 			case 3:
 				A[curImage][0] = 1.0; A[curImage][1] = -1.0; A[curImage][2] = 1.0;
 				B[curImage][0] = 1.0; B[curImage][1] = -1.0; B[curImage][2] = -1.0;
 				C[curImage][0] = 1.0; C[curImage][1] = 1.0; C[curImage][2] = -1.0;
 				D[curImage][0] = 1.0; D[curImage][1] = 1.0; D[curImage][2] = 1.0;
-				//faceNormal[curImage][0] = -1.0; faceNormal[curImage][1] = 0.0; faceNormal[curImage][2] = 0.0;
+				faceNormal[curImage][0] = -1.0; faceNormal[curImage][1] = 0.0; faceNormal[curImage][2] = 0.0;
 				break;
 			case 4:
 				A[curImage][0] = -1.0; A[curImage][1] = 1.0; A[curImage][2] = -1.0;
 				B[curImage][0] = 1.0; B[curImage][1] = 1.0; B[curImage][2] = -1.0;
 				C[curImage][0] = 1.0; C[curImage][1] = 1.0; C[curImage][2] = 1.0;
 				D[curImage][0] = -1.0; D[curImage][1] = 1.0; D[curImage][2] = 1.0;
-				//faceNormal[curImage][0] = 0.0; faceNormal[curImage][1] = -1.0; faceNormal[curImage][2] = 0.0;
+				faceNormal[curImage][0] = 0.0; faceNormal[curImage][1] = -1.0; faceNormal[curImage][2] = 0.0;
 				break;
 			case 5:
 				A[curImage][0] = -1.0; A[curImage][1] = -1.0; A[curImage][2] = 1.0;
 				B[curImage][0] = 1.0; B[curImage][1] = -1.0; B[curImage][2] = 1.0;
 				C[curImage][0] = 1.0; C[curImage][1] = 1.0; C[curImage][2] = 1.0;
 				D[curImage][0] = -1.0; D[curImage][1] = 1.0; D[curImage][2] = 1.0;
-				//faceNormal[curImage][0] = 0.0; faceNormal[curImage][1] = 0.0; faceNormal[curImage][2] = -1.0;
+				faceNormal[curImage][0] = 0.0; faceNormal[curImage][1] = 0.0; faceNormal[curImage][2] = -1.0;
 				break;
 			}// End switch for the image type to determine the corners of the face
 			
 			AB[curImage] = createVector3(A[curImage], B[curImage]);
 			AD[curImage] = createVector3(A[curImage], D[curImage]);
 			
-			faceNormal[curImage] = normalize(crossVector3(AB[curImage], AD[curImage]));
+			//faceNormal[curImage] = normalize(crossVector3(AB[curImage], AD[curImage]));
 		}// This ends the for loop for the faces
 		
 		int deltaphi = 72;
@@ -99,11 +99,11 @@ public class IrradianceMapGenerator
 		
 		int maxColor = 0;
 		
-		for (int phi = 0; phi < deltaphi; phi++)
+		for (int theta = 0; theta < deltatheta; theta++)
 		{
-			System.out.println("phi = " + phi);
+			System.out.println("theta = " + theta);
 			
-			for (int theta = 0; theta < deltatheta; theta++)
+			for (int phi = 0; phi < deltaphi; phi++)
 			{	
 				double[] color = new double[4];
 				
@@ -122,29 +122,38 @@ public class IrradianceMapGenerator
 							
 							double[] fragPosition = {0.0, 0.0, 0.0};
 							
-							double[] fragToImage = createVector3(fragPosition, imagePosition);
-							double[] imageToFrag = createVector3(imagePosition, fragPosition);
+							// Create the vectors from the light to the fragment and from the fragment to the light
+							double[] imageToFrag = createVector3(fragPosition, imagePosition);
+							double[] fragToImage = createVector3(imagePosition, fragPosition);
 							
+							// Normalize the vectors from and to the light from and to the fragment
 							fragToImage = normalize(fragToImage);
 							imageToFrag = normalize(imageToFrag);
 							
+							// Get the distance from the fragment to the light source
 							double distanceSquared = getDistance(imagePosition);
 							
+							// Get the dot products of the normal and the light vectors
 							double fragDot = getDot3(curFragNormal, fragToImage);
 							double areaDot = getDot3(faceNormal[curImage], imageToFrag);
 							
+							// Acquire the color from the image 
 							Color curColor = new Color(images[curImage].getRGB(curWidth, curHeight));
 							
 							double[] ABcrossAD = crossVector3(AB[curImage], AD[curImage]);
 							
+							// This is the length of the cross product of AB and AD which gives us the total area
 							double lengthABCross = Math.sqrt(getDistance(ABcrossAD));
 							
+							// The delta area is the area of a pixel in the image and multiply by 2 for the size of the face
 							double deltaArea = 1.0 / images[curImage].getHeight() * 2.0 * 2.0 * 1.0 / images[curImage].getWidth(); 							
 							
+							// Calculate the scalar that will be multiplied by the color
 							double scalar = fragDot * areaDot / distanceSquared * lengthABCross * deltaArea;
 							
 							//System.out.println("scalar = " + scalar);
 							
+							// Sum up the color over every pixel and image
 							color[0] += (double)curColor.getRed() * scalar;
 							color[1] += (double)curColor.getGreen() * scalar;
 							color[2] += (double)curColor.getBlue() * scalar;
@@ -160,13 +169,14 @@ public class IrradianceMapGenerator
 				finalArray[phi * (4*deltatheta) + theta * 4 + 2] = (int)color[2];
 				finalArray[phi * (4*deltatheta) + theta * 4 + 2] = (int)color[3];*/
 				
-				finalArray[phi * (3*deltatheta) + theta * 3 + 0] = (int)color[0];
-				finalArray[phi * (3*deltatheta) + theta * 3 + 1] = (int)color[1];
-				finalArray[phi * (3*deltatheta) + theta * 3 + 2] = (int)color[2];
+				// Store the color into our array based on the normal coordinates theta and phi
+				finalArray[theta * (3*deltaphi) + phi * 3 + 0] = (int)color[0];
+				finalArray[theta * (3*deltaphi) + phi * 3 + 1] = (int)color[1];
+				finalArray[theta * (3*deltaphi) + phi * 3 + 2] = (int)color[2];
 				
+				// Update the maximum color value that the irradiance map has found
 				int curMax = (int)Math.max(Math.max(color[0], color[1]), color[2]);
 				//int curMax = (int)Math.max(Math.max(Math.max(color[0], color[1]), color[2]), color[3]);
-				
 				if (curMax > maxColor)
 				{
 					maxColor = curMax;
@@ -190,6 +200,7 @@ public class IrradianceMapGenerator
 			{
 				//System.out.println(finalArray[i]);
 				
+				// Update the final value to be within 255.0
 				finalArray[i] = (int)(((double)finalArray[i] / (double)maxColor) * 255.0);
 				
 				//System.out.println(finalArray[i]);
