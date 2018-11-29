@@ -8,6 +8,48 @@ var params = {
 }; // holds a variable we change around in dat.gui
 var dawnRenderTarget, sunriseRenderTarget, morningRenderTarget, noonRenderTarget, afternoonRenderTarget, eveningRenderTarget, sunsetTarget, duskRenderTarget; // all our individual render targets probably going to make this into some object for condensing purposes.
 
+
+
+
+
+
+
+
+
+var lightMap = readFromFile("images/Dawn/dawn.out");
+lightMap.split(",");
+// HAVE TO MAKE LIGHTMAP!!!
+let data = Uint8Array.from(lightMap);
+let dataTexture = new THREE.DataTexture(data, 32,32, THREE.RGBFormat, THREE.UnsignedByteType, THREE.UVMapping);
+dataTexture.needsUpdate = true;
+let myMaterial = new THREE.RawShaderMaterial({
+    side: THREE.DoubleSide,
+    uniforms:{
+        diffuseColor: {value: new THREE.Color(0xffffff)},
+        texture: {value: dataTexture}
+    },
+    fragmentShader: readFromFile("Assignment5-18.fs"),
+    vertexShader: readFromFile("Assignment5.vs")
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 let lambo ={
     //mtlPathName:"objects/",
     objPathName: "objects/",
@@ -188,6 +230,19 @@ function updateObjectMaterial(object, material){
 	else if (object.children)
 		object.children.forEach(function(e){e.material = material;});
 	else alert("Error: Object does not have material property.");
+}
+
+function readFromFile(filename){
+    // Create a http request
+    var	xmlhttp = new XMLHttpRequest();
+    // Open the file
+    xmlhttp.open("GET", filename, false);
+    // 
+    xmlhttp.overrideMimeType("application/document");
+    // 
+    xmlhttp.send(null);
+    // Return the text
+    return xmlhttp.responseText;
 }
 
 // Renders everything on screen and checks to see if we have changed our envMap in params to a different renderTarget.
