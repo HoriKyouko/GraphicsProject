@@ -17,10 +17,10 @@ var dawnRenderTarget, sunriseRenderTarget, morningRenderTarget, noonRenderTarget
 
 
 var lightMap = readFromFile("images/Dawn/dawn.out");
-lightMap.split(", ");
+lightMap = lightMap.split(", ");
 // HAVE TO MAKE LIGHTMAP!!!
 let data = Uint8Array.from(lightMap);
-let dataTexture = new THREE.DataTexture(data, 72,36, THREE.RGBFormat, THREE.UnsignedByteType, THREE.UVMapping);
+let dataTexture = new THREE.DataTexture(data, 72, 36, THREE.RGBFormat, THREE.UnsignedByteType, THREE.UVMapping);
 dataTexture.needsUpdate = true;
 let myMaterial = new THREE.RawShaderMaterial({
     side: THREE.DoubleSide,
