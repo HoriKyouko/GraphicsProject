@@ -25,8 +25,8 @@ void main()
 
     vec4 color = vec4(diffuseColor / pi, 1.0);
 
-    vec4 mattColor = color * texture2D(texture, coord);
+    vec4 mattColor = texture2D(texture, coord);
 
     // Use the new color to shade the fragment
-    gl_FragColor = color;
+    gl_FragColor = mattColor;
 }
