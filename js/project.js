@@ -267,10 +267,6 @@ function addCircle(sph, sphereGeometry, sphereMaterial){
     sphereGeometry = new THREE.SphereGeometry(64, 512, 512);
     sphereMaterial = new THREE.MeshBasicMaterial();
     sph = new THREE.Mesh(sphereGeometry, sphereMaterial);
-    /*var geometry = new THREE.SphereGeometry(8, 32, 32);
-    var material = new THREE.MeshLambertMaterial({color: 0x2194ce, transparent: true, opacity: 0.5});
-    var sphere = new THREE.Mesh(geometry, material);
-    sphere.position.set(800, 0, -405);*/
     sph.position.set(512, 0, -512);
     sph.name = "SPHERE";
     scene.add(sph);
@@ -328,7 +324,7 @@ function addObjToSceneAndRender(objectInfo, scene, render) {
         objectInfo.obj = object;
         if(objectInfo.name === "mercedes"){
             for(var i = 0; i < 40; i++){
-                objectInfo.obj.children[i].material = new THREE.MeshPhongMaterial({color: 0xffffff, shininess:100, envMap: newCubeMaterial});
+                objectInfo.obj.children[i].material = new THREE.MeshPhongMaterial({color: 0xffffff, shininess:20, envMap: newCubeMaterial});
             }
         }
         else{
@@ -382,8 +378,9 @@ function animate(){
     if(newCubeMaterial !== cubeMaterial.uniforms.tCube.value){
         cubeMaterial.uniforms.tCube.value = newCubeMaterial;
         updateObjectMaterial(lambo.obj, myMaterial);
-        updateObjectMaterial(mercedes.obj, new THREE.MeshPhongMaterial({color: 0xffffff, shininess:100, envMap: newCubeMaterial}));
-        sphere.material = new THREE.MeshPhongMaterial({color: 0xffffff, shininess:100, envMap: newCubeMaterial});
+        updateObjectMaterial(mercedes.obj, new THREE.MeshPhongMaterial({color: 0xffffff, shininess:20, envMap: newCubeMaterial}));
+        sph.material = new THREE.MeshPhongMaterial({color: 0xffffff, shininess:100, envMap: newCubeMaterial});
+        sph.needsUpdate = true;
     }
     if(mercedes.obj !== undefined){
         mercedes.obj.rotation.y += 0.001;
