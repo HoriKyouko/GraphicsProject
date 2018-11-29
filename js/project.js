@@ -9,56 +9,15 @@ var params = {
 var dawnRenderTarget, sunriseRenderTarget, morningRenderTarget, noonRenderTarget, afternoonRenderTarget, eveningRenderTarget, sunsetTarget, duskRenderTarget; // all our individual render targets probably going to make this into some object for condensing purposes.
 var dawnMaterial, sunriseMaterial, morningMaterial, noonMaterial, afternoonMaterial, eveningMaterial, sunsetMaterial, duskMaterial, myMaterial;
 
-
-
-
-
-
-
-
-/*var lightMap = readFromFile("images/Dawn/dawn.out");
-lightMap = lightMap.split(", ");
-// HAVE TO MAKE LIGHTMAP!!!
-let data = Uint8Array.from(lightMap);
-let dataTexture = new THREE.DataTexture(data, 72, 36, THREE.RGBFormat, THREE.UnsignedByteType, THREE.UVMapping);
-dataTexture.needsUpdate = true;
-let myMaterial = new THREE.RawShaderMaterial({
-    side: THREE.DoubleSide,
-    uniforms:{
-        diffuseColor: {value: new THREE.Color(0xffffff)},
-        texture: {value: dataTexture}
-    },
-    fragmentShader: readFromFile("Assignment5-18.fs"),
-    vertexShader: readFromFile("Assignment5.vs")
-});*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 let lambo ={
     //mtlPathName:"objects/",
     objPathName: "objects/",
     //texturePathName: "objects/",
     //mtlFileName: "Lamborghini_Aventador.mtl",
     objFileName: "Lamborghini_Aventador.obj",
-    scale: 40,
+    scale: 1000,
     y_rotate: 0,
-    translateVector: new THREE.Vector3(0,0,0),
+    translateVector: new THREE.Vector3(0,-512,-512),
     obj: undefined,
     name: "lambo"
 };
