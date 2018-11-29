@@ -1,36 +1,37 @@
 var scene;
 var camera;
 var renderer;
+var dirLight, ambient, pointLight;
 var controls; // OrbitControls
 var reflectionCube, cubeShader, cubeMaterial, newCubeMaterial; // Used in our cubeMap
 var params = {
-    envMap: "Dawn"
+    envMap: "Dawn",
+    Light: "No Ambient"
 }; // holds a variable we change around in dat.gui
 var dawnRenderTarget, sunriseRenderTarget, morningRenderTarget, noonRenderTarget, afternoonRenderTarget, eveningRenderTarget, sunsetTarget, duskRenderTarget; // all our individual render targets probably going to make this into some object for condensing purposes.
 var dawnMaterial, sunriseMaterial, morningMaterial, noonMaterial, afternoonMaterial, eveningMaterial, sunsetMaterial, duskMaterial, myMaterial;
 
+let sphereGeometry, sphereMaterial, sph, sphereUp, sphereMaxHeight, sphereMinHeight, sphereChange;
+
 let lambo ={
-    //mtlPathName:"objects/",
     objPathName: "objects/",
-    //texturePathName: "objects/",
-    //mtlFileName: "Lamborghini_Aventador.mtl",
     objFileName: "Lamborghini_Aventador.obj",
     scale: 1000,
     y_rotate: 0,
-    translateVector: new THREE.Vector3(0,-512,-512),
+    translateVector: new THREE.Vector3(0,-1024,-512),
     obj: undefined,
     name: "lambo"
 };
 
-let sphereGeometry = new THREE.SphereGeometry(20, 512, 512);
-let sphereMaterial = new THREE.MeshBasicMaterial();
-let sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-let sphereUp = true;
-let sphereMaxHeight = 512;
-let sphereMinHeight = -512;
-let sphereChange = 2;
-sphere.translateVector = new THREE.Vector3(512, 0, 0);
-scene.add(sphere);
+let mercedes ={
+    objPathName: "objects/",
+    objFileName: "class2010.obj",
+    scale: 600,
+    y_rotate: 0,
+    translateVector: new THREE.Vector3(0,-512,-1024),
+    obj: undefined,
+    name: "mercedes"
+};
 
 // Function to be called when we first load the file see bottom of code.
 function init(){
@@ -41,13 +42,20 @@ function init(){
     setupControls(); // gets our orbit control ready
     setupCubeMap("images/test/", ".png"); // creates our cubemap with the first image which is dawn
     preloadTextures(); // loads in all the other textures into our above renderTargets respectively.
-    //addCircle(); // creates a semi-opaque blue sphere inside the cube.
+    addCircle(sph, sphereGeometry, sphereMaterial); // creates a semi-opaque blue sphere inside the cube.
     setupLight(); // creates some ambient lighting.
     window.addEventListener("resize", onWindowResize, false); // allows resizing if we open developer tools.
     var gui = new dat.GUI(); // creates our gui and puts in 8 options at the moment.
     gui.add(params, "envMap", ["Dawn", "Sunrise", "Morning", "Noon", "Afternoon", "Evening", "Sunset", "Dusk"]);
+    gui.add(params, "Light", ["Ambient", "No Ambient"]);
     gui.open();
     addObjToSceneAndRender(lambo, scene, renderer);
+    addObjToSceneAndRender(mercedes, scene, renderer);
+    sph = scene.children[1];
+    sphereUp = true;
+    sphereMaxHeight = 512;
+    sphereMinHeight = -512;
+    sphereChange = 1;
     animate(); // finally renders.
 }
 // Loads in our textures by calling updateTexture.
@@ -211,7 +219,7 @@ function setupControls(){
 }
 // Sets our cubemap and cube we will be using up and calls our shaderMaterial. The later might be moved as we build on this.
 function setupCubeMap(path, format){
-    var cubeGeo = new THREE.BoxGeometry(1024,1024,1024);
+    var cubeGeo = new THREE.BoxGeometry(2048,2048,2048);
     cubeShader = THREE.ShaderLib["cube"];
     cubeMaterial = new THREE.ShaderMaterial({
         fragmentShader: cubeShader.fragmentShader,
@@ -255,16 +263,26 @@ function loadTexture(texture, target){
     cubeMaterial.uniforms.tCube.value = reflectionCube;
 }
 // Adds our semi-opaque blue sphere to the scene.
-function addCircle(){
-    var geometry = new THREE.SphereGeometry(8, 32, 32);
+function addCircle(sph, sphereGeometry, sphereMaterial){
+    sphereGeometry = new THREE.SphereGeometry(64, 512, 512);
+    sphereMaterial = new THREE.MeshBasicMaterial();
+    sph = new THREE.Mesh(sphereGeometry, sphereMaterial);
+    /*var geometry = new THREE.SphereGeometry(8, 32, 32);
     var material = new THREE.MeshLambertMaterial({color: 0x2194ce, transparent: true, opacity: 0.5});
     var sphere = new THREE.Mesh(geometry, material);
-    scene.add(sphere);
+    sphere.position.set(800, 0, -405);*/
+    sph.position.set(512, 0, -512);
+    sph.name = "SPHERE";
+    scene.add(sph);
 }
 // Adds our white ambient light to the scene.
 function setupLight(){
-    var ambient = new THREE.AmbientLight( 0xffffff );
-    scene.add( ambient );
+    ambient = new THREE.AmbientLight( 0xffffff );
+    pointLight = new THREE.PointLight( 0xffffff);
+    dirLight = new THREE.DirectionalLight(0x731899);
+    pointLight.position.set(512, 0, -512);
+    scene.add(pointLight);
+    scene.add(dirLight);
 }
 // Resizes the camera everytime we change the viewing size.
 function onWindowResize() {
@@ -308,10 +326,18 @@ function addObjToSceneAndRender(objectInfo, scene, render) {
         if (objectInfo.y_rotate) object.rotateY(objectInfo.y_rotate);
         if (objectInfo.translateVector) object.position.copy(objectInfo.translateVector);
         objectInfo.obj = object;
-        objectInfo.obj.children.length = 6;
-        for(var i = 0; i < 6; i++){
-            objectInfo.obj.children[i].material = myMaterial;
+        if(objectInfo.name === "mercedes"){
+            for(var i = 0; i < 40; i++){
+                objectInfo.obj.children[i].material = new THREE.MeshPhongMaterial({color: 0xffffff, shininess:100, envMap: newCubeMaterial});
+            }
         }
+        else{
+            objectInfo.obj.children.length = 6;
+            for(var i = 0; i < 6; i++){
+                objectInfo.obj.children[i].material = myMaterial;
+            }
+        }
+        sph.material = new THREE.MeshPhongMaterial({color: 0xffffff, shininess:100, envMap: newCubeMaterial});
         scene.add(object);
         animate();
 	}
@@ -356,35 +382,42 @@ function animate(){
     if(newCubeMaterial !== cubeMaterial.uniforms.tCube.value){
         cubeMaterial.uniforms.tCube.value = newCubeMaterial;
         updateObjectMaterial(lambo.obj, myMaterial);
-        sphere.material = new THREE.MeshPhongMaterial({color: 0xffffff,
-            shininess:100, envMap: newCubeMaterial})
+        updateObjectMaterial(mercedes.obj, new THREE.MeshPhongMaterial({color: 0xffffff, shininess:100, envMap: newCubeMaterial}));
+        sphere.material = new THREE.MeshPhongMaterial({color: 0xffffff, shininess:100, envMap: newCubeMaterial});
     }
-    
+    if(mercedes.obj !== undefined){
+        mercedes.obj.rotation.y += 0.001;
+        dirLight.target = mercedes.obj;
+    }
     if (sphereUp)
     {
-        if (sphere.translateVector.y > sphereMaxHeight)
+        if (sph.position.y > sphereMaxHeight)
         {
             sphereUp = false;
-            sphere.translateVector.y -= sphereChange;
+            sph.position.y -= sphereChange;
         }
         else
         {
-            sphere.translateVector.y += sphereChange;
+            sph.position.y += sphereChange;
         }
     }
     else
     {
-        if (sphere.translateVector.y < sphereMinHeight)
+        if (sph.position.y < sphereMinHeight)
         {
             sphereUp = true;
-            sphere.translateVector.y += sphereChange;
+            sph.position.y += sphereChange;
         }
         else
         {
-            sphere.translateVector.y -= sphereChange;
+            sph.position.y -= sphereChange;
         }
     }
-
+    switch(params.Light){
+        case "Ambient": scene.add(ambient); break;
+        case "No Ambient": scene.remove(ambient); break;
+            
+    }
     renderer.render(scene, camera);
 }
 
