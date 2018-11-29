@@ -22,6 +22,16 @@ let lambo ={
     name: "lambo"
 };
 
+let sphereGeometry = new THREE.SphereGeometry(20, 512, 512);
+let sphereMaterial = new THREE.MeshBasicMaterial();
+let sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+let sphereUp = true;
+let sphereMaxHeight = 512;
+let sphereMinHeight = -512;
+let sphereChange = 2;
+sphere.translateVector = new THREE.Vector3(512, 0, 0);
+scene.add(sphere);
+
 // Function to be called when we first load the file see bottom of code.
 function init(){
     scene = new THREE.Scene();
@@ -346,8 +356,35 @@ function animate(){
     if(newCubeMaterial !== cubeMaterial.uniforms.tCube.value){
         cubeMaterial.uniforms.tCube.value = newCubeMaterial;
         updateObjectMaterial(lambo.obj, myMaterial);
+        sphere.material = new THREE.MeshPhongMaterial({color: 0xffffff,
+            shininess:100, envMap: newCubeMaterial})
     }
     
+    if (sphereUp)
+    {
+        if (sphere.translateVector.y > sphereMaxHeight)
+        {
+            sphereUp = false;
+            sphere.translateVector.y -= sphereChange;
+        }
+        else
+        {
+            sphere.translateVector.y += sphereChange;
+        }
+    }
+    else
+    {
+        if (sphere.translateVector.y < sphereMinHeight)
+        {
+            sphereUp = true;
+            sphere.translateVector.y += sphereChange;
+        }
+        else
+        {
+            sphere.translateVector.y -= sphereChange;
+        }
+    }
+
     renderer.render(scene, camera);
 }
 
