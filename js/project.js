@@ -333,7 +333,7 @@ function addObjToSceneAndRender(objectInfo, scene, render) {
                 objectInfo.obj.children[i].material = myMaterial;
             }
         }
-        sph.material = new THREE.MeshPhongMaterial({color: 0xffffff, shininess:100, envMap: newCubeMaterial});
+        sph.material = myMaterial;
         scene.add(object);
         animate();
 	}
