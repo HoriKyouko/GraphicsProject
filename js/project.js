@@ -77,8 +77,8 @@ function preloadTextures(){
                         diffuseColor: {value: new THREE.Color(0xffffff)},
                         texture: {value: dataTexture}
                     },
-                    fragmentShader: readFromFile("Assignment5-18.fs"),
-                    vertexShader: readFromFile("Assignment5.vs")
+                    fragmentShader: readFromFile("fragShader.fs"),
+                    vertexShader: readFromFile("vertexShader.vs")
                 });
                 updateTexture("images/Dawn/", ".png", "Dawn"); break;
             case 2:
@@ -93,8 +93,8 @@ function preloadTextures(){
                         diffuseColor: {value: new THREE.Color(0xffffff)},
                         texture: {value: dataTexture}
                     },
-                    fragmentShader: readFromFile("Assignment5-18.fs"),
-                    vertexShader: readFromFile("Assignment5.vs")
+                    fragmentShader: readFromFile("fragShader.fs"),
+                    vertexShader: readFromFile("vertexShader.vs")
                 });
                 updateTexture("images/Sunrise/", ".png", "Sunrise"); break;
             case 3:
@@ -109,8 +109,8 @@ function preloadTextures(){
                         diffuseColor: {value: new THREE.Color(0xffffff)},
                         texture: {value: dataTexture}
                     },
-                    fragmentShader: readFromFile("Assignment5-18.fs"),
-                    vertexShader: readFromFile("Assignment5.vs")
+                    fragmentShader: readFromFile("fragShader.fs"),
+                    vertexShader: readFromFile("vertexShader.vs")
                 });
                 updateTexture("images/Morning/", ".png", "Morning"); break;
             case 4:
@@ -125,8 +125,8 @@ function preloadTextures(){
                         diffuseColor: {value: new THREE.Color(0xffffff)},
                         texture: {value: dataTexture}
                     },
-                    fragmentShader: readFromFile("Assignment5-18.fs"),
-                    vertexShader: readFromFile("Assignment5.vs")
+                    fragmentShader: readFromFile("fragShader.fs"),
+                    vertexShader: readFromFile("vertexShader.vs")
                 });
                 updateTexture("images/Noon/", ".png", "Noon"); break;
             case 5:
@@ -141,8 +141,8 @@ function preloadTextures(){
                         diffuseColor: {value: new THREE.Color(0xffffff)},
                         texture: {value: dataTexture}
                     },
-                    fragmentShader: readFromFile("Assignment5-18.fs"),
-                    vertexShader: readFromFile("Assignment5.vs")
+                    fragmentShader: readFromFile("fragShader.fs"),
+                    vertexShader: readFromFile("vertexShader.vs")
                 });
                 updateTexture("images/Afternoon/", ".png", "Afternoon"); break;
             case 6:
@@ -157,8 +157,8 @@ function preloadTextures(){
                         diffuseColor: {value: new THREE.Color(0xffffff)},
                         texture: {value: dataTexture}
                     },
-                    fragmentShader: readFromFile("Assignment5-18.fs"),
-                    vertexShader: readFromFile("Assignment5.vs")
+                    fragmentShader: readFromFile("fragShader.fs"),
+                    vertexShader: readFromFile("vertexShader.vs")
                 });
                 updateTexture("images/Evening/", ".png", "Evening"); break;
             case 7:
@@ -173,8 +173,8 @@ function preloadTextures(){
                         diffuseColor: {value: new THREE.Color(0xffffff)},
                         texture: {value: dataTexture}
                     },
-                    fragmentShader: readFromFile("Assignment5-18.fs"),
-                    vertexShader: readFromFile("Assignment5.vs")
+                    fragmentShader: readFromFile("fragShader.fs"),
+                    vertexShader: readFromFile("vertexShader.vs")
                 });
                 updateTexture("images/Sunset/", ".png", "Sunset"); break;
             case 8:
@@ -189,8 +189,8 @@ function preloadTextures(){
                         diffuseColor: {value: new THREE.Color(0xffffff)},
                         texture: {value: dataTexture}
                     },
-                    fragmentShader: readFromFile("Assignment5-18.fs"),
-                    vertexShader: readFromFile("Assignment5.vs")
+                    fragmentShader: readFromFile("fragShader.fs"),
+                    vertexShader: readFromFile("vertexShader.vs")
                 });
                 updateTexture("images/Dusk/", ".png", "Dusk"); break;
         }
